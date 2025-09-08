@@ -1,0 +1,7 @@
+menu "@FMA Component - LVGL"
+
+    config USE_FMA_LVGL
+        bool "Enable fma_lvgl support"
+        default n
+
+endmenu

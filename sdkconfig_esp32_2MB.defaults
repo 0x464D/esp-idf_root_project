@@ -1,0 +1,26 @@
+# Configuración del proyecto ESP32 básico
+# Este archivo es  el que se debería modificar (DEFAULT)
+# Se puede crear uno  desde 'idf.py defconfig'
+# 
+# El archivo sdkconfig se modifica automáticamente por el 'idf.py menuconfig'
+
+CONFIG_ESPTOOLPY_PORT="/dev/ttyACM0"
+
+CONFIG_ESP_CONSOLE_UART_DEFAULT=y
+CONFIG_ESP_CONSOLE_UART_NUM=0
+CONFIG_ESP_CONSOLE_UART_RX_BUF_LEN=1024
+CONFIG_ESP_CONSOLE_UART_TX_PIN=1
+CONFIG_ESP_CONSOLE_UART_RX_PIN=3
+
+# Configuración de particiones
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions_esp32_2MB.csv"
+
+# Configuración de WiFi (deshabilitado para este ejemplo básico)
+CONFIG_ESP_WIFI_ENABLED=n
+
+# Configuración de Bluetooth (deshabilitado para este ejemplo básico)
+CONFIG_BT_ENABLED=n
+
+# @FMA_COMPONENTS
+CONFIG_USE_FMA_LVGL=y

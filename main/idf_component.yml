@@ -1,0 +1,7 @@
+dependencies:
+  fma_components/fma_lvgl:
+    version: 1.*
+    path: ../fma_components/fma_lvgl
+  lvgl/lvgl: "^9.3.0"
+description: Fred firmware
+version: 1.0.0
