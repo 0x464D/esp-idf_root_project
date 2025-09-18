@@ -10,6 +10,7 @@ extern "C" {
 typedef struct _objects_t {
     lv_obj_t *main;
     lv_obj_t *txt_area_v1;
+    lv_obj_t *img_v1;
 } objects_t;
 
 extern objects_t objects;

@@ -25,13 +25,23 @@ void create_screen_main() {
             // txtAreaV1
             lv_obj_t *obj = lv_textarea_create(parent_obj);
             objects.txt_area_v1 = obj;
-            lv_obj_set_pos(obj, 26, 41);
-            lv_obj_set_size(obj, 189, 54);
+            lv_obj_set_pos(obj, 0, 0);
+            lv_obj_set_size(obj, 240, 47);
             lv_textarea_set_max_length(obj, 128);
             lv_textarea_set_text(obj, "Esto es un texto de prueba 12345");
             lv_textarea_set_one_line(obj, false);
             lv_textarea_set_password_mode(obj, false);
             lv_obj_add_flag(obj, LV_OBJ_FLAG_SCROLL_WITH_ARROW);
+        }
+        {
+            // imgV1
+            lv_obj_t *obj = lv_image_create(parent_obj);
+            objects.img_v1 = obj;
+            lv_obj_set_pos(obj, 80, 47);
+            lv_obj_set_size(obj, 80, 90);
+            lv_image_set_src(obj, &img_test);
+            lv_image_set_scale(obj, 10);
+            lv_image_set_inner_align(obj, LV_IMAGE_ALIGN_STRETCH);
         }
     }
     
