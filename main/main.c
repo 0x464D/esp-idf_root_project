@@ -10,6 +10,8 @@
 #include "esp_timer.h"
 #include "lvgl.h"
 
+#include "ui.h"
+
 // Pines del LILYGO T-Display
 #define PIN_NUM_MOSI     19
 #define PIN_NUM_CLK      18
@@ -163,16 +165,56 @@ static void create_demo_ui(void)
 }
 
 // ---- Tarea principal LVGL ----
+static int contador = 0;
+
 static void lvgl_task(void *pv)
 {
+    // Contador interno que guarda el tiempo del ultimo wake (despertar)
+    TickType_t last_wake_time = xTaskGetTickCount();
+
     while (1) {
-        if (xSemaphoreTake(lvgl_mux, portMAX_DELAY)) {
+        if (xSemaphoreTake(lvgl_mux, portMAX_DELAY)) { // Se toma el mutex para evitar que otra tarea acceda a LVGL
             lv_timer_handler();
-            xSemaphoreGive(lvgl_mux);
+            ui_tick(); // función de tick personalizada
+            xSemaphoreGive(lvgl_mux); // Se libera el mutex
         }
-        vTaskDelay(pdMS_TO_TICKS(10));
+
+        // Esperar exactamente 10 ms antes de la siguiente iteración (pdMS_TO_TICKS pasa de milisegundos a ticks)
+        // Es importante medir ticks para mantener esta precisión para refrescar la pantalla y saber cuanto tiempo ha transcurrido desde el último wake
+        // WARNING: Si se usa vTaskDelay(10) puede que no se espere exactamente 10 ms
+        vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(10)); 
+
+        // Cada 100 iteraciones (100 * 10 ms = 1000 ms = 1 segundo)
+        static int ticks = 0;   // Solo se inicializa una vez dentro del segmento .data o .bss NO dentro del stack (pila)
+        ticks++;
+        if (ticks >= 100) {
+            ticks = 0;
+
+            // Cambiar texto con contador
+            if (xSemaphoreTake(lvgl_mux, portMAX_DELAY)) { // Se toma el mutex para evitar que otra tarea acceda a LVGL
+                // Asegúrate de que el textarea está creado y accesible
+                char buf[64];
+                snprintf(buf, sizeof(buf), "Contador: %d", contador++);
+                lv_textarea_set_text(objects.txt_area_v1, buf);
+                xSemaphoreGive(lvgl_mux); // Se libera el mutex
+        }
+
+        /* Si la tarea hace algo que no sea LVGL, se puede usar este código para medir el tiempo real transcurrido
+           y hacer algo cada segundo real (no cada 100 iteraciones de 10 ms que pueden no ser exactos):
+           
+            static TickType_t last_time = 0;
+            TickType_t now = xTaskGetTickCount();
+
+            if (now - last_time >= pdMS_TO_TICKS(1000)) {
+                last_time = now;
+
+                // Ha pasado 1 segundo real
+            }
+
+        */
     }
 }
+
 
 // ---- app_main ----
 void app_main(void)
@@ -181,7 +223,9 @@ void app_main(void)
 
     lcd_init();
     lvgl_init();
-    create_demo_ui();
+    
+    //create_demo_ui();
+    ui_init(); // Inicializar la UI personalizada
 
     xTaskCreate(lvgl_task, "lvgl_task", 4096, NULL, 5, NULL);
 }
