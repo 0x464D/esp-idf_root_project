@@ -1,0 +1,5 @@
+menu "@FMA Component - GPIO"
+    config USE_FMA_GPIO
+        bool "Enable fma_gpio support"
+        default n
+endmenu

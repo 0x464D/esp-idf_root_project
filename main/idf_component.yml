@@ -2,5 +2,8 @@ dependencies:
   fma_components/fma_lvgl:
     version: 1.*
     path: ../fma_components/fma_lvgl
+  fma_components/fma_gpio:
+    version: 1.*
+    path: ../fma_components/fma_gpio
 description: Fred firmware
 version: 1.0.0

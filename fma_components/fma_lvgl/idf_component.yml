@@ -1,4 +1,6 @@
 dependencies:
+  idf: 
+    version: '>=6.0'
   lvgl/lvgl: "^9.3.0"
 description: FMA Components Library - LVGL
 version: 1.0.0
