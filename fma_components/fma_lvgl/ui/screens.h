@@ -8,18 +8,23 @@ extern "C" {
 #endif
 
 typedef struct _objects_t {
-    lv_obj_t *main;
+    lv_obj_t *link_view;
+    lv_obj_t *halo_view;
     lv_obj_t *link_zelda;
 } objects_t;
 
 extern objects_t objects;
 
 enum ScreensEnum {
-    SCREEN_ID_MAIN = 1,
+    SCREEN_ID_LINK_VIEW = 1,
+    SCREEN_ID_HALO_VIEW = 2,
 };
 
-void create_screen_main();
-void tick_screen_main();
+void create_screen_link_view();
+void tick_screen_link_view();
+
+void create_screen_halo_view();
+void tick_screen_halo_view();
 
 void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);

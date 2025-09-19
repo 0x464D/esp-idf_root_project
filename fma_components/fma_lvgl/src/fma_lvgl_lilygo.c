@@ -187,22 +187,25 @@ void fma_lvgl_task(void *pv)
             xSemaphoreGive(lvgl_mux); // Se libera el mutex
         }
 
-        #if 0
+        #if 1
         // Esperar exactamente 10 ms antes de la siguiente iteración (pdMS_TO_TICKS pasa de milisegundos a ticks)
         // Es importante medir ticks para mantener esta precisión para refrescar la pantalla y saber cuanto tiempo ha transcurrido desde el último wake
         // WARNING: Si se usa vTaskDelay(10) puede que no se espere exactamente 10 ms
         vTaskDelayUntil(&last_wake_time, pdMS_TO_TICKS(10));
 
+        static int current_screen = SCREEN_ID_LINK_VIEW;
         // Cada 100 iteraciones (100 * 10 ms = 1000 ms = 1 segundo)
         static int ticks = 0; // Solo se inicializa una vez dentro del segmento .data o .bss NO dentro del stack (pila)
         ticks++;
-        if (ticks >= 100)
+        if (ticks >= 200) // Cada 2 segundos
         {
             ticks = 0;
 
             // Cambiar texto con contador
             if (xSemaphoreTake(lvgl_mux, portMAX_DELAY))
             { // Se toma el mutex para evitar que otra tarea acceda a LVGL
+                
+                /*
                 // Asegúrate de que el textarea está creado y accesible
                 char buf[80];
                 int contador_len = snprintf(NULL, 0, "%d", contador); // Longitud del contador
@@ -211,6 +214,13 @@ void fma_lvgl_task(void *pv)
                     snprintf(buf, sizeof(buf), "%s: %d", TAG, contador++);
                 }
                 lv_textarea_set_text(objects.txt_area_v1, buf);
+                */
+                
+                // Cambia de pantalla cada 2 segundos
+                current_screen = (current_screen == SCREEN_ID_LINK_VIEW) ? SCREEN_ID_HALO_VIEW : SCREEN_ID_LINK_VIEW;
+
+                loadScreen(current_screen);
+
                 xSemaphoreGive(lvgl_mux); // Se libera el mutex
             }
 
