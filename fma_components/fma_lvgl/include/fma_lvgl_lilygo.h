@@ -17,4 +17,7 @@ void fma_lvgl_init();
 // Solamente se declara static si va a ser usada dentro del mismo archivo .c
 void fma_lvgl_task(void *pv);
 
+void fma_lvgl_gpio_callback_boton1(void);
+void fma_lvgl_gpio_callback_boton2(void);
+
 #endif /* FMA_LVGL_LILYGO_ */

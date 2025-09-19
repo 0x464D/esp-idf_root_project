@@ -1,9 +1,12 @@
+#include "fma_gpio.h"
+
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "freertos/semphr.h"
 #include "driver/gpio.h"
 
 #include "esp_log.h"
+
 
 static const char *TAG = "GPIO";
 
@@ -51,6 +54,15 @@ static void IRAM_ATTR gpio_isr_handler(void* arg) {
     }
 }
 
+#define MAX_GPIO_CALLBACKS 40
+static gpio_callback_t gpio_callbacks[MAX_GPIO_CALLBACKS] = {0};  // índice = número de pin
+
+void gpio_register_callback_for_pin(gpio_num_t pin, gpio_callback_t callback) {
+    if (pin < MAX_GPIO_CALLBACKS) {
+        gpio_callbacks[pin] = callback;
+    }
+}
+
 // Tarea que maneja la interrupción
 /* 
 La tarea está esperando a que el semáforo sea liberado.
@@ -72,9 +84,10 @@ static void interrupt_task(void* arg) {
         if (xQueueReceive(gpio_evt_queue, &pin, portMAX_DELAY) == pdTRUE) {
             ESP_LOGI(TAG, "Interrupcion de borde de caida detectada en el pin %lu", pin);
             
-            if (pin == GPIO_INPUT_PIN_1) {
-            } else if (pin == GPIO_INPUT_PIN_2) {
-            }
+            // if (pin == GPIO_INPUT_PIN_1) {
+            // } else if (pin == GPIO_INPUT_PIN_2) {
+            // }
+            gpio_callbacks[pin]();
         }
     }
 }

@@ -187,7 +187,7 @@ void fma_lvgl_task(void *pv)
             xSemaphoreGive(lvgl_mux); // Se libera el mutex
         }
 
-        #if 1
+        #if 0
         // Esperar exactamente 10 ms antes de la siguiente iteración (pdMS_TO_TICKS pasa de milisegundos a ticks)
         // Es importante medir ticks para mantener esta precisión para refrescar la pantalla y saber cuanto tiempo ha transcurrido desde el último wake
         // WARNING: Si se usa vTaskDelay(10) puede que no se espere exactamente 10 ms
@@ -262,5 +262,27 @@ void fma_lvgl_init()
     */
 }
 
+
+void fma_lvgl_gpio_callback_boton1(void) {
+    // Manejar la interrupción del botón 1 (GPIO_NUM_0)
+    ESP_LOGI(TAG, "Botón 1 presionado (GPIO_NUM_0)");
+    // Aquí puedes agregar la lógica que desees al presionar el botón 1
+    if (xSemaphoreTake(lvgl_mux, portMAX_DELAY))
+    { // Se toma el mutex para evitar que otra tarea acceda a LVGL
+        loadScreen(SCREEN_ID_HALO_VIEW);
+        xSemaphoreGive(lvgl_mux); // Se libera el mutex
+    }
+}
+void fma_lvgl_gpio_callback_boton2(void) {
+  // Manejar la interrupción del botón 2 (GPIO_NUM_35)
+  ESP_LOGI(TAG, "Botón 2 presionado (GPIO_NUM_35)");
+  // Aquí puedes agregar la lógica que desees al presionar el botón 2
+
+  if (xSemaphoreTake(lvgl_mux, portMAX_DELAY))
+  { // Se toma el mutex para evitar que otra tarea acceda a LVGL
+      loadScreen(SCREEN_ID_LINK_VIEW);
+      xSemaphoreGive(lvgl_mux); // Se libera el mutex
+  }
+}
 
 
