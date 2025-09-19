@@ -5,13 +5,12 @@
 #include "freertos/semphr.h"
 #include "driver/gpio.h"
 
+#include "esp_timer.h"
+
 #include "esp_log.h"
 
 
 static const char *TAG = "GPIO";
-
-#define GPIO_INPUT_PIN_1 0
-#define GPIO_INPUT_PIN_2 35
 
 // Declaración de la cola
 QueueHandle_t gpio_evt_queue = NULL;
@@ -19,7 +18,7 @@ QueueHandle_t gpio_evt_queue = NULL;
 // Variables para debounce
 TickType_t last_isr_time_pin1 = 0;
 TickType_t last_isr_time_pin2 = 0;
-TickType_t debounce_delay = 250 / portTICK_PERIOD_MS;  // Tiempo de debounce en milisegundos
+TickType_t debounce_delay = 50 / portTICK_PERIOD_MS;  // Tiempo de debounce en 50 milisegundos
 
 // Handler de la interrupción
 /*
@@ -63,6 +62,10 @@ void gpio_register_callback_for_pin(gpio_num_t pin, gpio_callback_t callback) {
     }
 }
 
+
+#define MAX_GPIO_PINS 40
+static int64_t press_start_time[MAX_GPIO_PINS] = {0};
+
 // Tarea que maneja la interrupción
 /* 
 La tarea está esperando a que el semáforo sea liberado.
@@ -79,15 +82,44 @@ Este patrón es eficiente porque la tarea solo se ejecuta cuando hay trabajo que
 (en este caso, manejar una interrupción). No está ocupando tiempo de CPU innecesariamente.
 */
 static void interrupt_task(void* arg) {
-    uint32_t pin;
+     uint32_t pin;
     while (1) {
         if (xQueueReceive(gpio_evt_queue, &pin, portMAX_DELAY) == pdTRUE) {
-            ESP_LOGI(TAG, "Interrupcion de borde de caida detectada en el pin %lu", pin);
-            
-            // if (pin == GPIO_INPUT_PIN_1) {
-            // } else if (pin == GPIO_INPUT_PIN_2) {
-            // }
-            gpio_callbacks[pin]();
+
+            int level = gpio_get_level(pin);  // Leemos el nivel actual
+
+            if (level == 0) {
+                // Presionado (flanco de bajada)
+                press_start_time[pin] = esp_timer_get_time();  // µs
+            } else {
+                // Liberado (flanco de subida)
+                int64_t duration_us = esp_timer_get_time() - press_start_time[pin];
+                ESP_LOGI(TAG, "Botón %d presionado por %lld ms", pin, duration_us / 1000);
+
+                if(pin == GPIO_INPUT_PIN_1) {
+                    if (duration_us >= 5000000) { // 5 segundos
+                        gpio_callbacks[GPIO_INPUT_PIN_1_5sec_PRESSED]();
+                        ESP_LOGI(TAG, "Botón %d: Evento de 5 segundos", pin);
+                        // Aquí puedes manejar el evento de 5 segundos
+                    } else if (duration_us >= 3000000) { // 3 segundos
+                        gpio_callbacks[GPIO_INPUT_PIN_1_3sec_PRESSED]();
+                        ESP_LOGI(TAG, "Botón %d: Evento de 3 segundos", pin);
+                        // Aquí puedes manejar el evento de 3 segundos
+                    } else {
+                        ESP_LOGI(TAG, "Botón %d: Evento corto", pin);
+                        // Aquí puedes manejar el evento corto
+                        // Llamamos al callback normal, si lo tienes
+                        if (gpio_callbacks[pin]) {
+                            gpio_callbacks[pin]();
+                        }
+                    }
+                } else if(pin == GPIO_INPUT_PIN_2) {
+                    // Llamamos al callback normal, si lo tienes
+                    if (gpio_callbacks[pin]) {
+                        gpio_callbacks[pin]();
+                    }
+                }
+            }
         }
     }
 }
@@ -105,7 +137,7 @@ void fma_gpio_init() {
 
     // Configuración de los pines como entrada
     gpio_config_t io_conf = {};
-    io_conf.intr_type = GPIO_INTR_NEGEDGE; // Interrupción en el borde de caída
+    io_conf.intr_type = GPIO_INTR_ANYEDGE; // Interrupción en el borde de caída
     io_conf.pin_bit_mask = (1ULL << GPIO_INPUT_PIN_1) | (1ULL << GPIO_INPUT_PIN_2); // Máscara de los pines
     io_conf.mode = GPIO_MODE_INPUT; // Modo de entrada
     io_conf.pull_up_en = 1; // Habilitar pull-up interno

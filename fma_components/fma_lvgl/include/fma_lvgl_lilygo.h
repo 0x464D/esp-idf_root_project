@@ -18,6 +18,9 @@ void fma_lvgl_init();
 void fma_lvgl_task(void *pv);
 
 void fma_lvgl_gpio_callback_boton1(void);
+void fma_lvgl_gpio_callback_boton1_3sec(void);
+void fma_lvgl_gpio_callback_boton1_5sec(void);
+
 void fma_lvgl_gpio_callback_boton2(void);
 
 #endif /* FMA_LVGL_LILYGO_ */

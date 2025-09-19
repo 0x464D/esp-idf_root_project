@@ -177,12 +177,15 @@ void fma_lvgl_task(void *pv)
     int label_len = strlen(TAG); // Longitud de la etiqueta
 
     ESP_LOGI(TAG, "Iniciando LVGL en %s", TAG);
+    const TickType_t xDelay = pdMS_TO_TICKS(10); // LVGL recomienda 5-10 ms
+
 
     while (1)
     {
         if (xSemaphoreTake(lvgl_mux, portMAX_DELAY))
         { // Se toma el mutex para evitar que otra tarea acceda a LVGL
             lv_timer_handler();
+            vTaskDelay(xDelay); // Muy importante: cede la CPU a otras tareas
             ui_tick();                // función de tick personalizada
             xSemaphoreGive(lvgl_mux); // Se libera el mutex
         }
@@ -273,6 +276,30 @@ void fma_lvgl_gpio_callback_boton1(void) {
         xSemaphoreGive(lvgl_mux); // Se libera el mutex
     }
 }
+
+void fma_lvgl_gpio_callback_boton1_3sec(void) {
+  // Manejar la interrupción del botón 1 (GPIO_NUM_0)
+  ESP_LOGI(TAG, "Botón 1 presionado (GPIO_NUM_0) por mas de 3 segundos");
+  // Aquí puedes agregar la lógica que desees al presionar el botón 1
+  if (xSemaphoreTake(lvgl_mux, portMAX_DELAY))
+  { // Se toma el mutex para evitar que otra tarea acceda a LVGL
+      loadScreen(SCREEN_ID_MARIO_VIEW);
+      xSemaphoreGive(lvgl_mux); // Se libera el mutex
+  }
+}
+
+void fma_lvgl_gpio_callback_boton1_5sec(void) {
+  // Manejar la interrupción del botón 1 (GPIO_NUM_0)
+  ESP_LOGI(TAG, "Botón 1 presionado (GPIO_NUM_0) por mas de 5 segundos");
+  // Aquí puedes agregar la lógica que desees al presionar el botón 2
+
+  if (xSemaphoreTake(lvgl_mux, portMAX_DELAY))
+  { // Se toma el mutex para evitar que otra tarea acceda a LVGL
+      loadScreen(SCREEN_ID_SECRET_VIEW);
+      xSemaphoreGive(lvgl_mux); // Se libera el mutex
+  }
+}
+
 void fma_lvgl_gpio_callback_boton2(void) {
   // Manejar la interrupción del botón 2 (GPIO_NUM_35)
   ESP_LOGI(TAG, "Botón 2 presionado (GPIO_NUM_35)");

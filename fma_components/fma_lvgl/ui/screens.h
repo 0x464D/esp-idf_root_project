@@ -10,7 +10,10 @@ extern "C" {
 typedef struct _objects_t {
     lv_obj_t *link_view;
     lv_obj_t *halo_view;
+    lv_obj_t *mario_view;
+    lv_obj_t *secret_view;
     lv_obj_t *link_zelda;
+    lv_obj_t *text_area;
 } objects_t;
 
 extern objects_t objects;
@@ -18,6 +21,8 @@ extern objects_t objects;
 enum ScreensEnum {
     SCREEN_ID_LINK_VIEW = 1,
     SCREEN_ID_HALO_VIEW = 2,
+    SCREEN_ID_MARIO_VIEW = 3,
+    SCREEN_ID_SECRET_VIEW = 4,
 };
 
 void create_screen_link_view();
@@ -25,6 +30,12 @@ void tick_screen_link_view();
 
 void create_screen_halo_view();
 void tick_screen_halo_view();
+
+void create_screen_mario_view();
+void tick_screen_mario_view();
+
+void create_screen_secret_view();
+void tick_screen_secret_view();
 
 void tick_screen_by_id(enum ScreensEnum screenId);
 void tick_screen(int screen_index);

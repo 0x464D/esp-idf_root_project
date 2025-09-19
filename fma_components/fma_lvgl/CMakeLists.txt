@@ -6,6 +6,7 @@ idf_component_register(SRCS
     $<$<BOOL:${CONFIG_USE_FMA_LVGL}>:./ui/images.c>
     $<$<BOOL:${CONFIG_USE_FMA_LVGL}>:./ui/ui_image_link_zelda.c>
     $<$<BOOL:${CONFIG_USE_FMA_LVGL}>:./ui/ui_image_halo.c>
+    $<$<BOOL:${CONFIG_USE_FMA_LVGL}>:./ui/ui_image_mario.c>
 
     INCLUDE_DIRS "." "include"  "./ui"
     REQUIRES lvgl driver esp_lcd

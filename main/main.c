@@ -28,7 +28,10 @@ void app_main(void)
     #endif
 
     #if defined(CONFIG_USE_FMA_GPIO) && defined(CONFIG_USE_FMA_LVGL)
-        gpio_register_callback_for_pin(GPIO_NUM_0, fma_lvgl_gpio_callback_boton1);
-        gpio_register_callback_for_pin(GPIO_NUM_35, fma_lvgl_gpio_callback_boton2);
+        gpio_register_callback_for_pin(GPIO_INPUT_PIN_1, fma_lvgl_gpio_callback_boton1);
+        gpio_register_callback_for_pin(GPIO_INPUT_PIN_2, fma_lvgl_gpio_callback_boton2);
+        gpio_register_callback_for_pin(GPIO_INPUT_PIN_1_3sec_PRESSED, fma_lvgl_gpio_callback_boton1_3sec);
+        gpio_register_callback_for_pin(GPIO_INPUT_PIN_1_5sec_PRESSED, fma_lvgl_gpio_callback_boton1_5sec);
+
     #endif
 }
