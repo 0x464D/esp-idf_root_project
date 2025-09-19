@@ -1,0 +1,11 @@
+menu "@FMA Component - BLE gatts server"
+
+    # IMPORTANTE: Además de habilitar este componente (idf.py menuconfig), 
+    # asegúrate de que 'Bluetooth' esté activado en el menú de configuración principal.
+    # Bluetooth -> Bluetooth controller -> 'Enable Bluetooth controller'
+    # Bluetooth -> Host -> 'NimBLE - BLE only'
+    # Bluetooth -> Controller -> 'Enabled'
+    config USE_FMA_NIMBLE_SERVER
+        bool "Enable fma_nimble_server support"
+        default n
+endmenu

@@ -11,6 +11,10 @@
 #include "fma_gpio.h"
 #endif
 
+#ifdef CONFIG_USE_FMA_NIMBLE_SERVER
+#include "fma_nimble_server.h"
+#endif
+
 static const char *TAG = "MAIN";
 
 // ---- app_main ----
@@ -34,4 +38,8 @@ void app_main(void)
         gpio_register_callback_for_pin(GPIO_INPUT_PIN_1_5sec_PRESSED, fma_lvgl_gpio_callback_boton1_5sec);
 
     #endif
+
+    #ifdef CONFIG_USE_FMA_NIMBLE_SERVER
+        run_nimble_thread();
+    #endif  
 }

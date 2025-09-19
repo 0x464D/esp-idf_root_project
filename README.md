@@ -59,6 +59,8 @@ Este es un proyecto básico para ESP32 que parpadea un LED y muestra un mensaje 
    Conecta tu placa ESP32 al ordenador mediante un cable USB.
 
    ```bash
+   idf.py erase_flash                        Borra todo el firmware incluyendo la NVS
+   idf.py erase_partition nvs                Borra solamente la particion definida
    idf.py -p /dev/ttyUSB0 build	            Compila el proyecto
    idf.py -p /dev/ttyUSB0 flash	            Flashea el firmware al ESP32
    idf.py -p /dev/ttyUSB0 monitor            Abre el monitor serial (modo consola interactiva)
