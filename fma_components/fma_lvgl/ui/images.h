@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-extern const lv_img_dsc_t img_test;
+extern const lv_img_dsc_t img_link_zelda;
 
 #ifndef EXT_IMG_DESC_T
 #define EXT_IMG_DESC_T

@@ -168,6 +168,7 @@ __attribute__((unused)) static void create_demo_ui(void)
 // ---- Tarea principal LVGL ----
 static int contador = 0;
 
+
 void fma_lvgl_task(void *pv)
 {
     // Contador interno que guarda el tiempo del ultimo wake (despertar)
@@ -186,6 +187,7 @@ void fma_lvgl_task(void *pv)
             xSemaphoreGive(lvgl_mux); // Se libera el mutex
         }
 
+        #if 0
         // Esperar exactamente 10 ms antes de la siguiente iteración (pdMS_TO_TICKS pasa de milisegundos a ticks)
         // Es importante medir ticks para mantener esta precisión para refrescar la pantalla y saber cuanto tiempo ha transcurrido desde el último wake
         // WARNING: Si se usa vTaskDelay(10) puede que no se espere exactamente 10 ms
@@ -226,8 +228,11 @@ void fma_lvgl_task(void *pv)
 
             */
         }
+        #endif
     }
 }
+
+
 
 void fma_lvgl_init()
 {
@@ -238,6 +243,13 @@ void fma_lvgl_init()
 
     // create_demo_ui();
     ui_init(); // Inicializar la UI personalizada
+
+    /*
+        Crear la tarea es IMPRESCINDIBLE que se haga DESPUÉS de inicializar LVGL y la UI para que la pantalla se refresque correctamente
+        sino no se verá nada en pantalla
+
+        xTaskCreate(fma_lvgl_task, "fma_lvgl_task", 4096, NULL, 5, NULL);
+    */
 }
 
 
