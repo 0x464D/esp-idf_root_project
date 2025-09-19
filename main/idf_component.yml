@@ -5,5 +5,8 @@ dependencies:
   fma_components/fma_gpio:
     version: 1.*
     path: ../fma_components/fma_gpio
+  fma_components/fma_nimble_server:
+    version: 1.*
+    path: ../fma_components/fma_nimble_server
 description: Fred firmware
 version: 1.0.0
