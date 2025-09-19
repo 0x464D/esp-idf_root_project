@@ -1,7 +1,25 @@
 menu "@FMA Component - LVGL"
 
-    config USE_FMA_LVGL
-        bool "Enable fma_lvgl support"
-        default n
+config USE_FMA_LVGL
+    bool "Enable fma_lvgl support"
+    default n
+
+choice
+    prompt "Board Type"
+    depends on USE_FMA_LVGL
+
+config BOARD_LILYGO
+    bool "LILYGO"
+
+config BOARD_LILYGOS3
+    bool "LILYGOS3"
+
+config BOARD_LILYGOC3
+    bool "LILYGOC3"
+
+config BOARD_OTRA
+    bool "OTRA"
+
+endchoice
 
 endmenu
